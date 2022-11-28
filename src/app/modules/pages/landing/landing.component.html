@@ -1,0 +1,73 @@
+<div class="landing-page-container">
+
+    <div class="page-header">
+        <h1>Gist List</h1>
+    </div>
+    <div class="input-container">
+        <div class="filter-input-container">
+            <input #filterInput [value]="userName" (keyup)="userName = filterInput.value" />
+            <img *ngIf="userName.length > 0" class="clear-icon" src="assets/close.svg" alt="clear"
+                (change)="clearFilterHandler()" />
+            <button>
+                <img src="assets/search.svg" alt="filter" (click)="gistFilterHandler()" />
+            </button>
+        </div>
+        <div class="limit-filter">
+            <select [value]="limit" (change)="limitChangeHandler($event)">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+    <div class="list-container">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Owner Avatar</th>
+                    <th scope="col">Owner Type</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Comments</th>
+                    <th scope="col">File Type</th>
+                    <th scope="col">Url</th>
+                    <th scope="col">Last Forks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let gist of gists">
+                    <td data-label="Avatar">
+                        <img class="owner-avatar" src={{gist?.owner?.avatar_url}} />
+                    </td>
+                    <td data-label="Type">{{gist?.owner?.type}}</td>
+                    <td data-label="Created At">{{gist?.created_at | date:'mediumDate'}}</td>
+                    <td data-label="Comments">{{gist?.comments}}</td>
+                    <td data-label="Badge">
+                        <div [appBadge]="gist.files" class="file-badge">
+                        </div>
+                    </td>
+                    <td data-label="Url">
+                        <a class="gist-link" href={{gist?.html_url}} target="_blank">
+                            <img src="assets/external-link.svg" />
+                        </a>
+                    </td>
+                    <td data-label="Last Forks">
+                        <div *ngIf="gist.forks!.length > 0; else NoForks" class="forks-user">
+                            <a *ngFor="let fork of gist.forks" target="_blank" href={{fork?.html_url}}>
+                                <img src={{fork?.owner?.avatar_url}} alt="user" />
+                            </a>
+                        </div>
+                        <ng-template #NoForks>Empty</ng-template>
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+        <p *ngIf="gists.length === 0 && !isLoading" class="no-record">No Records Found</p>
+        <div *ngIf="isLoading" class="loader">
+            <img src="assets/spinner.svg" alt="spinner" />
+        </div>
+    </div>
+
+</div>
